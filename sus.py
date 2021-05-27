@@ -2,39 +2,59 @@ from PIL import Image
 import numpy as np
 import subprocess
 
-width = 50
-imgs = [Image.open(f"{n}.png").convert("RGBA") for n in range(6)]
-cell_width = imgs[0].size[0]
-cell_height = imgs[0].size[1]
+output_width = 21  # Width of output gif, measured in sussy crewmates
+twerk_frame_count = 6  # 0.png to 5.png
 
-im = Image.open("input.png")
-height = int((width * im.size[1]) / im.size[0] * 75 / 65)
-scaled = im.resize((width, height), Image.NEAREST).convert("RGB")
-scaled.save("scaled.png")
+# Load twerk frames 🥵
+twerk_frames = []
+twerk_frames_data = []  # Image as numpy array, pre-calculated for performance
+for i in range(6):
+    img = Image.open(f"{i}.png").convert("RGBA")
+    twerk_frames.append(img)
+    twerk_frames_data.append(np.array(img))
 
-frames = []
-for frame in range(6):
-    background = Image.new(mode="RGB", size=(width*cell_width, height*cell_height))
-    for y in range(height):
-        for x in range(width):
-            r, g, b = scaled.getpixel((x, y))
-            data = np.array(imgs[(x-y+frame) % len(imgs)])
-            red, green, blue, alpha = data.T
+# Get dimensions of first twerk frame. Assume all frames have same dimensions
+twerk_width, twerk_height = twerk_frames[0].size
+
+# Get image to sussify!
+input_image = Image.open("input.png").convert("RGB")
+input_width, input_height = input_image.size
+
+# Height of output gif (in crewmates)
+output_height = int(output_width * (input_height / input_width) * (twerk_width / twerk_height))
+
+for frame_number in range(twerk_frame_count):
+    print("Sussying frame #", frame_number)
+
+    # Create blank canvas
+    background = Image.new(mode="RGBA", size=(output_width*twerk_width, output_height*twerk_height))
+    for y in range(output_height):
+        for x in range(output_width):
+            # Get rgb values from input image (basically nearest neighbour interpolation)
+            r, g, b = input_image.getpixel((int(x / output_width * input_width), int(y / output_height * input_height)))
+
+            # Grab that twerk data we calculated earlier
+            # (x - y + frame_number) is the animation frame index,
+            # we use the position and frame number as offsets to produce the wave-like effect
+            sussified_frame_data = np.copy(twerk_frames_data[(x - y + frame_number) % len(twerk_frames)])
+            red, green, blue, alpha = sussified_frame_data.T
+            # Replace all pixels with colour (214,224,240) with the input image colour at that location
             color_1 = (red == 214) & (green == 224) & (blue == 240)
+            sussified_frame_data[..., :-1][color_1.T] = (r, g, b)  # thx stackoverflow
+            # Repeat with colour (131,148,191) but use two thirds of the input image colour to get a darker colour
             color_2 = (red == 131) & (green == 148) & (blue == 191)
-            data[..., :-1][color_1.T] = (r, g, b)
-            data[..., :-1][color_2.T] = (int(r*2/3), int(g*2/3), int(b*2/3))
-            im3 = Image.fromarray(data)
-            #im3.show()
-            #input()
-            background.paste(im3, (x*cell_width, y*cell_height))
-    frames.append(background)
-[f.save(f"out_{n}.png") for n, f in enumerate(frames)]
-# NO TRANSPARENCY:
-subprocess.call('ffmpeg -f image2 -i out_%d.png -filter_complex "[0:v] scale=sws_dither=none:,split [a][b];[a] palettegen=max_colors=255:stats_mode=single [p];[b][p] paletteuse=dither=none" -r 20 -y test.gif')
-# TRANSPARENCY (removes any black pixels)
-#subprocess.call('ffmpeg -f image2 -i out_%d.png -filter_complex "[0:v]chromakey=0x000000,scale=sws_dither=none:,split [a][b];[a] palettegen=max_colors=255:stats_mode=single [p];[b][p] paletteuse=dither=none" -r 20 -y test.gif')
+            sussified_frame_data[..., :-1][color_2.T] = (int(r*2/3), int(g*2/3), int(b*2/3))
 
-#frames[0].save("out.gif", save_all=True, append_images=[frames[1], frames[2], frames[3], frames[4], frames[5]], loop=0, optimize=True)
+            # Convert sussy frame data back to sussy frame
+            sussified_frame = Image.fromarray(sussified_frame_data)
 
-#background.show()
+            # Slap said frame onto the background 
+            background.paste(sussified_frame, (x * twerk_width, y * twerk_height))
+    background.save(f"sussified_{frame_number}.png")
+
+print("Converting sussy frames to sussy gif")
+# Convert sussied frames to gif. PIL has a built-in method to save gifs but
+# it has dithering which looks sus, so we use ffmpeg with dither=none
+subprocess.call('./ffmpeg -f image2 -i sussified_%d.png -filter_complex "[0:v] scale=sws_dither=none:,split [a][b];[a] palettegen=max_colors=255:stats_mode=single [p];[b][p] paletteuse=dither=none" -r 20 -y -hide_banner -loglevel error sussified.gif')
+
+# lamkas a cute
