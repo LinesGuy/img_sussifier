@@ -9,6 +9,7 @@ Examples
 ![jonathon](https://user-images.githubusercontent.com/60029482/119795170-21887c80-bed0-11eb-909a-ccbc007e8545.gif)
 
 # How to use
+- install python
 - pip install pillow numpy
 - change input.png to your desired image
 - optionally change output_width in sus.py (output height is calculated automagically)
