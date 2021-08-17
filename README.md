@@ -1,4 +1,3 @@
-
 # img_sussifier
 A python script to convert images to animated sus among us crewmate twerk jifs as seen on r/196
 
@@ -11,6 +10,7 @@ Examples
 # How to use
 - install python
 - pip install pillow numpy
+- install ffmpeg
 - change input.png to your desired image
 - optionally change output_width in sus.py (output height is calculated automagically)
 - run sus.py
