@@ -15,3 +15,6 @@ Examples
 - optionally change output_width in sus.py (output height is calculated automagically)
 - run sus.py
 - upload sussified.gif to r/196 for free karma and also to kill the sus among meme faster
+
+# help i have no idea what any of that means
+just use this discord bot it does the same thing but you don't have to deal with my program: https://dumpy.t1c.dev/
