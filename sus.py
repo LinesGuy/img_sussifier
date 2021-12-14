@@ -111,4 +111,7 @@ for frame_number in range(6):
     os.remove(f"sussified_{frame_number}.png")
 print("Done!")
 
+print("The result was saved to sussified.gif")
+input()
+
 # lamkas a cute
