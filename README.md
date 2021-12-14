@@ -8,13 +8,16 @@ Examples
 ![jonathon](https://user-images.githubusercontent.com/60029482/119795170-21887c80-bed0-11eb-909a-ccbc007e8545.gif)
 
 # How to use
-- install python
+- install python (>=3.7)
 - pip install pillow numpy
-- install ffmpeg
-- change input.png to your desired image
-- optionally change output_width in sus.py (output height is calculated automagically)
+- install ffmpeg (or place ffmpeg.exe in same directory as sus.py)
+- Replace input.png with your own image
 - run sus.py
-- upload sussified.gif to r/196 for free karma and also to kill the sus among meme faster
+- image is saved to sussified.gif
 
-# help i have no idea what any of that means
-just use this discord bot it does the same thing but you don't have to deal with my program: https://dumpy.t1c.dev/
+# How to use (for people who have a life):
+- Download the latest release [here](https://github.com/LinesGuy/img_sussifier/releases/)
+- Extract the contents of the zip anywhere
+- Replace input.png with your own image
+- Run sus.exe
+- upload sussified.gif to r/196 for free karma and also to kill the sus among meme faster
