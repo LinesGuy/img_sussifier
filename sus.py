@@ -23,7 +23,7 @@ else:
 # Load twerk frames
 twerk_frames = []
 twerk_frames_data = []  # Image as numpy array, pre-calculated for performance
-print("Loading twerk frames...", end="")
+print("Loading twerk frames... ", end="")
 for i in range(6):
     try:
         img = Image.open(f"twerk_imgs/{i}.png").convert("RGBA")
@@ -34,15 +34,20 @@ for i in range(6):
         exit()
     twerk_frames.append(img)
     twerk_frames_data.append(np.array(img))
-print("done")
+print("Done!")
 
 # Get dimensions of first twerk frame. Assume all frames have same dimensions
 twerk_width, twerk_height = twerk_frames[0].size
 
 # Get image to sussify
-print("Grabbing input.png...", end="")
-input_image = Image.open("input.png").convert("RGB")
-print("done")
+print("Opening input.png... ", end="")
+try:
+    input_image = Image.open("input.png").convert("RGB")
+except Exception as e:
+    print("Error loading input.png, make sure it's in the same directory as this script.")
+    print(e)
+    exit()
+print("Done!")
 input_width, input_height = input_image.size
 
 # Height of output gif (in crewmates)
@@ -58,7 +63,7 @@ else:
     input_image_scaled = input_image.resize((output_width, output_height))
 
 for frame_number in range(6):
-    print(f"Processing frame #{frame_number}...", end="")
+    print(f"Processing frame #{frame_number}... ", end="")
 
     # Create blank canvas
     background = Image.new(mode="RGBA", size=output_px)
@@ -84,18 +89,23 @@ for frame_number in range(6):
             # Slap said frame onto the background 
             background.paste(sussified_frame, (x * twerk_width, y * twerk_height))
     background.save(f"sussified_{frame_number}.png")
-    print("done")
+    print("Done!")
 
-print("Saving as .gif...", end="")
+print("Saving as .gif... ", end="")
 # Convert sussied frames to gif. PIL has a built-in method to save gifs but
 # it has dithering which looks sus, so we use ffmpeg with dither=none
-subprocess.call('ffmpeg -f image2 -i sussified_%d.png -filter_complex "[0:v] scale=sws_dither=none:,split [a][b];[a] palettegen=max_colors=255:stats_mode=single [p];[b][p] paletteuse=dither=none" -r 20 -y -hide_banner -loglevel error sussified.gif')
-print("done")
+try:
+    subprocess.call('ffmpeg -f image2 -i sussified_%d.png -filter_complex "[0:v] scale=sws_dither=none:,split [a][b];[a] palettegen=max_colors=255:stats_mode=single [p];[b][p] paletteuse=dither=none" -r 20 -y -hide_banner -loglevel error sussified.gif')
+except Exception as e:
+    print("Error saving as .gif, make sure ffmpeg is installed system-wide or ffmpeg.exe is in the same directory as this script.")
+    print(e)
+    exit()
+print("Done!")
 
 # Remove temp files
-print("Removing temporary files...", end="")
+print("Removing temporary files... ", end="")
 for frame_number in range(6):
     os.remove(f"sussified_{frame_number}.png")
-print("done")
+print("Done!")
 
 # lamkas a cute
