@@ -29,8 +29,9 @@ for i in range(6):
         img = Image.open(f"twerk_imgs/{i}.png").convert("RGBA")
     except Exception as e:
         print(f"Error loading twerk frames! Filename = {i}.png")
-        print("Probably you renamed the twerk_imgs folder or forgot to set twerk_frame_count. baka")
+        print("Probably you renamed the twerk_imgs folder or deleted it.")
         print(e)
+        input()
         exit()
     twerk_frames.append(img)
     twerk_frames_data.append(np.array(img))
@@ -46,6 +47,7 @@ try:
 except Exception as e:
     print("Error loading input.png, make sure it's in the same directory as this script.")
     print(e)
+    input()
     exit()
 print("Done!")
 input_width, input_height = input_image.size
@@ -99,6 +101,7 @@ try:
 except Exception as e:
     print("Error saving as .gif, make sure ffmpeg is installed system-wide or ffmpeg.exe is in the same directory as this script.")
     print(e)
+    input()
     exit()
 print("Done!")
 
