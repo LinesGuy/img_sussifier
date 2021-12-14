@@ -3,13 +3,27 @@ import numpy as np
 import subprocess
 import os
 
-output_width = 21  # Width of output gif, measured in crewmates
-nearest_neighbour = True  # Use nearest neighbour interpolation
-twerk_frame_count = 6  # 0.png through 5.png
+output_width = 21  # Measured in crewmates
+try:
+    output_width = int(input("Enter width of output image in crewmates [default=21]: "))
+except ValueError:
+    print("Invalid input, using default width of 21.")
+if output_width >= 75:
+    input("That is a VERY large width, output is measured in crewmates (75x65 pixels each) NOT raw pixels. Press CTRL+C to cancel or enter to continue (this may take a long time)")
+
+nearest_neighbour = True
+nn_input = input('Use nearest neighbor? (Keep enabled for flags, disable to smooth the output if image is "noisy") [y/n, default=y]: ').lower()
+if nn_input == "n" or nn_input == "no":
+    nearest_neighbour = False
+elif nn_input == "y" or nn_input == "yes":
+    pass
+else:
+    print("Invalid input, using default value of yes")
 
 # Load twerk frames
 twerk_frames = []
 twerk_frames_data = []  # Image as numpy array, pre-calculated for performance
+print("Loading twerk frames...", end="")
 for i in range(6):
     try:
         img = Image.open(f"twerk_imgs/{i}.png").convert("RGBA")
@@ -20,12 +34,15 @@ for i in range(6):
         exit()
     twerk_frames.append(img)
     twerk_frames_data.append(np.array(img))
+print("done")
 
 # Get dimensions of first twerk frame. Assume all frames have same dimensions
 twerk_width, twerk_height = twerk_frames[0].size
 
 # Get image to sussify
+print("Grabbing input.png...", end="")
 input_image = Image.open("input.png").convert("RGB")
+print("done")
 input_width, input_height = input_image.size
 
 # Height of output gif (in crewmates)
@@ -40,8 +57,8 @@ if nearest_neighbour:
 else:
     input_image_scaled = input_image.resize((output_width, output_height))
 
-for frame_number in range(twerk_frame_count):
-    print("Sussying frame #", frame_number)
+for frame_number in range(6):
+    print(f"Processing frame #{frame_number}...", end="")
 
     # Create blank canvas
     background = Image.new(mode="RGBA", size=output_px)
@@ -67,15 +84,18 @@ for frame_number in range(twerk_frame_count):
             # Slap said frame onto the background 
             background.paste(sussified_frame, (x * twerk_width, y * twerk_height))
     background.save(f"sussified_{frame_number}.png")
+    print("done")
 
-print("Converting sussy frames to sussy gif")
+print("Saving as .gif...", end="")
 # Convert sussied frames to gif. PIL has a built-in method to save gifs but
 # it has dithering which looks sus, so we use ffmpeg with dither=none
 subprocess.call('ffmpeg -f image2 -i sussified_%d.png -filter_complex "[0:v] scale=sws_dither=none:,split [a][b];[a] palettegen=max_colors=255:stats_mode=single [p];[b][p] paletteuse=dither=none" -r 20 -y -hide_banner -loglevel error sussified.gif')
+print("done")
 
 # Remove temp files
-print("Ejecting temp files from folder")
-for frame_number in range(twerk_frame_count):
+print("Removing temporary files...", end="")
+for frame_number in range(6):
     os.remove(f"sussified_{frame_number}.png")
+print("done")
 
 # lamkas a cute
