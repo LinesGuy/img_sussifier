@@ -96,8 +96,9 @@ for frame_number in range(6):
 print("Saving as .gif... ", end="")
 # Convert sussied frames to gif. PIL has a built-in method to save gifs but
 # it has dithering which looks sus, so we use ffmpeg with dither=none
+
 try:
-    subprocess.call('ffmpeg -f image2 -i sussified_%d.png -filter_complex "[0:v] scale=sws_dither=none:,split [a][b];[a] palettegen=max_colors=255:stats_mode=single [p];[b][p] paletteuse=dither=none" -r 20 -y -hide_banner -loglevel error sussified.gif')
+    subprocess.call('ffmpeg -f image2 -i sussified_%d.png -filter_complex "[0:v] scale=sws_dither=none:,split [a][b];[a] palettegen=max_colors=255:stats_mode=single [p];[b][p] paletteuse=dither=none" -r 20 -y -hide_banner -loglevel error sussified.gif', shell=True)
 except Exception as e:
     print("Error saving as .gif, make sure ffmpeg is installed system-wide or ffmpeg.exe is in the same directory as this script.")
     print(e)
