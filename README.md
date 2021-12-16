@@ -1,6 +1,8 @@
 # img_sussifier
 A python script to convert images to animated sus among us crewmate twerk jifs as seen on r/196
 
+Please check out [ThatOneCalculator's among us dumpy gif maker](https://github.com/ThatOneCalculator/Among-Us-Dumpy-Gif-Maker), it existed before mine and was made in more than a couple hours.
+
 Examples
 ![sussified brit](https://user-images.githubusercontent.com/60029482/119789119-aec8d280-beca-11eb-9a4c-c81b9539526d.gif)
 ![ditto with higher resolution](https://user-images.githubusercontent.com/60029482/119781696-39a5cf00-bec3-11eb-8b2c-71df0e6afe34.gif)
